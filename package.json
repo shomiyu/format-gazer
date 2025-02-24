@@ -1,0 +1,26 @@
+{
+  "name": "heic-to-png",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "heic-png": "node scripts/convert-heic-png.js",
+    "heic-jpg": "node scripts/convert-heic-jpg.js",
+    "pngquant": "node scripts/optimize-png.js",
+    "jpegoptim": "node scripts/optimize-jpg.js",
+    "optim": "npm run pngquant && npm run jpegoptim",
+    "webp": "node scripts/convert-webp.js",
+    "format": "npm run optim && npm run webp"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "heic-convert": "^2.1.0",
+    "path": "^0.12.7",
+    "pngquant-bin": "^9.0.0",
+    "promises": "^0.2.5",
+    "sharp": "^0.33.5"
+  }
+}
