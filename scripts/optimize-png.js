@@ -4,26 +4,33 @@ const { execFile } = require("child_process");
 
 async function optimizePNGFiles() {
   const pngquant = (await import("pngquant-bin")).default;
+  const srcDir = path.join(__dirname, "../src");
   const outputDir = path.join(__dirname, "../output");
 
   try {
-    const files = await fs.readdir(outputDir);
+    await fs.mkdir(outputDir, { recursive: true });
+
+    const files = await fs.readdir(srcDir);
     for (const file of files) {
       if (path.extname(file).toLowerCase() === ".png") {
-        const filePath = path.join(outputDir, file);
+        const srcPath = path.join(srcDir, file);
+        const outputPath = path.join(outputDir, file);
+
+        await fs.copyFile(srcPath, outputPath);
+
         await new Promise((resolve, reject) => {
           execFile(
             pngquant,
             [
-              "--quality=60-75", // 圧縮率を少し上げる（元は65-80）
-              "--speed=1", // 最も遅いが最適な圧縮を実現（1-11、1が最高品質）
+              "--quality=60-75",
+              "--speed=1",
               "--ext=.png",
               "--force",
-              filePath,
+              outputPath,
             ],
             (err) => {
               if (err) return reject(err);
-              console.log(`🔧 Optimized: ${filePath}`);
+              console.log(`🔧 Optimized: ${file}`);
               resolve();
             }
           );

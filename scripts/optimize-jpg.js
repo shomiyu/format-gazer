@@ -3,31 +3,27 @@ const path = require("path");
 const sharp = require("sharp");
 
 async function optimizeJPGFiles() {
+  const srcDir = path.join(__dirname, "../src");
   const outputDir = path.join(__dirname, "../output");
 
   try {
-    const files = await fs.readdir(outputDir);
+    await fs.mkdir(outputDir, { recursive: true });
+
+    const files = await fs.readdir(srcDir);
     for (const file of files) {
       if (path.extname(file).toLowerCase() === ".jpg") {
-        const filePath = path.join(outputDir, file);
-        const optimizedPath = path.join(
-          outputDir,
-          `${path.parse(file).name}.jpg`
-        );
+        const srcPath = path.join(srcDir, file);
+        const outputPath = path.join(outputDir, file);
 
-        await sharp(filePath)
+        await sharp(srcPath)
           .jpeg({
-            quality: 75, // 圧縮品質（0-100）
-            mozjpeg: true, // mozjpegを使用して高品質な圧縮を実現
-            chromaSubsampling: "4:2:0", // より効率的な圧縮のためのサブサンプリング
+            quality: 75,
+            mozjpeg: true,
+            chromaSubsampling: "4:2:0",
           })
-          .toFile(optimizedPath + ".tmp");
+          .toFile(outputPath);
 
-        // 一時ファイルを元のファイルに置き換え
-        await fs.unlink(filePath);
-        await fs.rename(optimizedPath + ".tmp", filePath);
-
-        console.log(`🔧 Optimized: ${filePath}`);
+        console.log(`🔧 Optimized: ${file}`);
       }
     }
     console.log("🎉 JPG optimization complete!");
